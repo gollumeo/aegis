@@ -1,0 +1,55 @@
+{
+  "name": "gollumeo/aegis",
+  "description": "Aegis — HTTP Idempotency middleware for Laravel (enforced, 2xx replay, Location-safe).",
+  "type": "library",
+  "license": "MIT",
+  "version": "0.1",
+  "scripts": {
+    "ci": [
+      "@test",
+      "php vendor/bin/pint --parallel",
+      "php vendor/bin/phpstan analyze ."
+    ],
+    "test": "php vendor/bin/pest --parallel"
+  },
+  "require": {
+    "php": "^8.3",
+    "illuminate/support": "^12.0",
+    "illuminate/http": "^12.0",
+    "psr/log": "^3.0",
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^v10.4.0",
+    "pestphp/pest": "^v3.8.2",
+    "pestphp/pest-plugin-laravel": "^v3.2.0",
+    "mockery/mockery": "^1.6.12",
+    "laravel/pint": "^v1.24.0",
+    "phpstan/phpstan": "^2.1",
+    "larastan/larastan": "^3.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Gollumeo\\Aegis\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Gollumeo\\Aegis\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Gollumeo\\Aegis\\AegisServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}
