@@ -12,6 +12,9 @@ final class AegisServiceProvider extends ServiceProvider
     public function boot(): void
     {
         app('router')->aliasMiddleware('aegis', Idempotency::class);
-        $this->publishes([__DIR__.'/../config/aegis.php' => config_path('aegis.php')], 'aegis-config');
+        $this->publishes(
+            paths: [__DIR__.'/../config/aegis.php' => config_path('aegis.php')],
+            groups: 'aegis-config'
+        );
     }
 }
