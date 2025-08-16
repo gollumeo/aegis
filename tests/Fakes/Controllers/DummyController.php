@@ -8,12 +8,22 @@ use Illuminate\Http\JsonResponse;
 
 final class DummyController
 {
-    private int $counter;
+    private static int $hits = 0;
+
+    public static function totalHits(): int
+    {
+        return self::$hits;
+    }
+
+    public static function reset(): void
+    {
+        self::$hits = 0;
+    }
 
     public function pay(): JsonResponse
     {
-        $this->counter++;
+        self::$hits++;
 
-        return response()->json(['ok' => true], 201, ['Content-Type', 'application/json'], JSON_PRETTY_PRINT);
+        return response()->json(['ok' => true], 201, ['Content-Type' => 'application/json'], JSON_PRETTY_PRINT);
     }
 }
