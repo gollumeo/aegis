@@ -15,10 +15,17 @@ final class EnsureIdempotencyHeaders implements InsuranceContract
      */
     public function assert(Request $request): void
     {
-        /** @var string $idempotencyHeader */
-        $idempotencyHeader = config('aegis.header_name');
+        /** @var string $idempotencyHeaderName */
+        $idempotencyHeaderName = config('aegis.header_name');
 
-        if (! $request->headers->has($idempotencyHeader)) {
+        if (! $request->headers->has($idempotencyHeaderName)) {
+            throw new MissingIdempotencyHeader();
+        }
+
+        /** @var string $headers */
+        $headers = $request->headers->get($idempotencyHeaderName);
+
+        if (mb_trim($headers) === '') {
             throw new MissingIdempotencyHeader();
         }
     }
