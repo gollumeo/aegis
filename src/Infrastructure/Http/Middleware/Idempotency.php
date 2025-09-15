@@ -5,10 +5,16 @@ declare(strict_types=1);
 namespace Gollumeo\Aegis\Infrastructure\Http\Middleware;
 
 use Closure;
+use Gollumeo\Aegis\Application\Contracts\InsuranceContract;
 use Illuminate\Http\Request;
 
-final class Idempotency
+final readonly class Idempotency
 {
+    // TODO
+    //    public function __construct(
+    //        private readonly InsuranceContract $insuranceContract
+    //    ) {}
+
     public function handle(Request $request, Closure $next): mixed
     {
         // TODO: refacto
