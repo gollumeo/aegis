@@ -30,7 +30,8 @@ describe('Unit: Idempotency Policy', function (): void {
         expect(
             /**
              * @throws MissingIdempotencyHeader
-             */ fn () => $insurance->assert($request)
+             */
+            fn () => $insurance->assert($request)
         )->toThrow(MissingIdempotencyHeader::class);
     });
 });
