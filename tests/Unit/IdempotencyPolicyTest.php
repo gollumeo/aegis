@@ -27,11 +27,35 @@ describe('Unit: Idempotency Policy', function (): void {
         $aegisHeaderName = config('aegis.header_name');
 
         $request->headers->set($aegisHeaderName, '');
+
         expect(
             /**
              * @throws MissingIdempotencyHeader
              */
             fn () => $insurance->assert($request)
         )->toThrow(MissingIdempotencyHeader::class);
+
+        $request->headers->set($aegisHeaderName, '123');
+
+        expect(
+            /**
+             * @throws MissingIdempotencyHeader
+             */
+            fn () => $insurance->assert($request)
+        )->not->toThrow(MissingIdempotencyHeader::class);
+    });
+
+    it('fails if the Idempotency-Key header length is too short', function (): void {
+        $insurance = new EnsureIdempotencyKeyLength();
+
+        $request = Request::create('/payments', 'POST');
+
+        $aegisHeaderName = config('aegis.header_name');
+
+        $request->headers->set($aegisHeaderName, '123');
+
+        expect(
+            fn () => $insurance->assert($request)
+        )->toThrow(InvalidIdempotencyKeyLength::class);
     });
 });
