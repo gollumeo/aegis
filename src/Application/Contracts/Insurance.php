@@ -6,7 +6,7 @@ namespace Gollumeo\Aegis\Application\Contracts;
 
 use Illuminate\Http\Request;
 
-interface InsuranceContract
+interface Insurance
 {
     public function assert(Request $request): void;
 }
