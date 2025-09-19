@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Gollumeo\Aegis\Infrastructure\Http\Middleware;
 
 use Closure;
-use Gollumeo\Aegis\Application\Contracts\InsuranceContract;
 use Illuminate\Http\Request;
 
 final readonly class Idempotency
