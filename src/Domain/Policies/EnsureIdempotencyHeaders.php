@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Gollumeo\Aegis\Domain\Policies;
 
-use Gollumeo\Aegis\Application\Contracts\InsuranceContract;
+use Gollumeo\Aegis\Application\Contracts\Insurance;
 use Gollumeo\Aegis\Domain\Exceptions\MissingIdempotencyHeader;
 use Illuminate\Http\Request;
 
-final class EnsureIdempotencyHeaders implements InsuranceContract
+final class EnsureIdempotencyHeaders implements Insurance
 {
     /**
      * @throws MissingIdempotencyHeader
