@@ -25,6 +25,8 @@ abstract class TestCase extends Orchestra
         config(['aegis.require_header' => true]);
         config(['aegis.header_name' => 'Idempotency-Key']);
         config(['aegis.methods' => ['POST', 'PUT', 'PATCH', 'DELETE']]);
+        config(['aegis.key.min' => 16]);
+        config(['aegis.key.max' => 120]);
     }
 
     protected function defineRoutes(mixed $router): void
