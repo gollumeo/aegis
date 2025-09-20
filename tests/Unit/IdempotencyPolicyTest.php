@@ -38,6 +38,15 @@ describe('Unit: Idempotency Policy', function (): void {
             fn () => $insurance->assert($request)
         )->toThrow(MissingIdempotencyHeader::class);
 
+    });
+
+    it('succeeds if the Idempotency-Key header is correct', function (): void {
+        $insurance = new EnsureIdempotencyHeaders();
+        $request = Request::create('/payments', 'POST');
+
+        /** @var string $aegisHeaderName */
+        $aegisHeaderName = config('aegis.header_name');
+
         $request->headers->set($aegisHeaderName, '123');
 
         expect(
