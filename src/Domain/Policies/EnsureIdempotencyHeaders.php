@@ -11,7 +11,13 @@ use Illuminate\Http\Request;
 final class EnsureIdempotencyHeaders implements Insurance
 {
     /**
-     * @throws MissingIdempotencyHeader
+     * Ensures that the incoming request contains the required idempotency header
+     * and that the header value is not empty. Throws an exception if these conditions
+     * are not met.
+     *
+     * @param  Request  $request  The HTTP request object to validate.
+     *
+     * @throws MissingIdempotencyHeader Thrown if the idempotency header is missing or its value is empty.
      */
     public function assert(Request $request): void
     {

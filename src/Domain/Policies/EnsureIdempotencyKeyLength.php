@@ -11,7 +11,11 @@ use Illuminate\Http\Request;
 final class EnsureIdempotencyKeyLength implements Insurance
 {
     /**
-     * @throws InvalidIdempotencyKeyLength
+     * Validates the idempotency key length in the request headers based on the predefined minimum and maximum charset configurations.
+     *
+     * @param  Request  $request  The incoming HTTP request containing the headers to be validated.
+     *
+     * @throws InvalidIdempotencyKeyLength If the idempotency key length is outside the allowed range.
      */
     public function assert(Request $request): void
     {
@@ -23,6 +27,7 @@ final class EnsureIdempotencyKeyLength implements Insurance
         /** @var string $idempotencyHeaderName */
         $idempotencyHeaderName = config('aegis.header_name');
 
+        /** @var string $headers */
         $headers = $request->headers->get($idempotencyHeaderName);
 
         if (mb_strlen($headers) < $minCharset || mb_strlen($headers) > $maxCharset) {
