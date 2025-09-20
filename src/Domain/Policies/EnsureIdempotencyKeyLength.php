@@ -23,10 +23,8 @@ final class EnsureIdempotencyKeyLength implements Insurance
         $minCharset = config('aegis.key.min');
         /** @var int $maxCharset */
         $maxCharset = config('aegis.key.max');
-
         /** @var string $idempotencyHeaderName */
         $idempotencyHeaderName = config('aegis.header_name');
-
         /** @var string $headers */
         $headers = $request->headers->get($idempotencyHeaderName);
 
