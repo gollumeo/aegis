@@ -23,14 +23,12 @@ final class EnsureIdempotencyHeaders implements Insurance
     {
         /** @var string $idempotencyHeaderName */
         $idempotencyHeaderName = config('aegis.header_name');
-
         if (! $request->headers->has($idempotencyHeaderName)) {
             throw new MissingIdempotencyHeader();
         }
 
         /** @var string $headers */
         $headers = $request->headers->get($idempotencyHeaderName);
-
         if (mb_trim($headers) === '') {
             throw new MissingIdempotencyHeader();
         }
