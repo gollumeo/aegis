@@ -119,5 +119,12 @@ describe('Unit: Idempotency Policy', function (): void {
              */
             fn () => $insurance->assert($request)
         )->toThrow(InvalidIdempotencyCharset::class);
+
+        $request->headers->set($aegisHeaderName, 'foo_é-bar');
+        expect(
+            /**
+             * @throws InvalidIdempotencyCharset
+             */ fn () => $insurance->assert($request)
+        )->toThrow(InvalidIdempotencyCharset::class);
     });
 });
