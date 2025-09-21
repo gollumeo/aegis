@@ -82,8 +82,7 @@ describe('Unit: Idempotency Policy', function (): void {
 
             /** @var int<1, max> $maxKeyLength */
             $maxKeyLength = config('aegis.key.max');
-            $randomLongKey = bin2hex(random_bytes(($maxKeyLength))); // `bin2hex` doubles the string anyway (1 byte === 2 hex chars)
-
+            $randomLongKey = str_repeat('a', $maxKeyLength + 1);
             $request->headers->set($aegisHeaderName, $randomLongKey);
 
             expect(
@@ -127,4 +126,21 @@ describe('Unit: Idempotency Policy', function (): void {
              */ fn () => $insurance->assert($request)
         )->toThrow(InvalidIdempotencyCharset::class);
     });
+
+    it('succeeds if the Idempotency-Key charset is correct', function (): void {
+        $insurance = new EnsureIdempotencyCharset();
+        $request = Request::create('/payments', 'POST');
+        /** @var string $aegisHeaderName */
+        $aegisHeaderName = config('aegis.header_name');
+        $request->headers->set($aegisHeaderName, '123456-azerzerzd');
+
+        expect(
+            /**
+             * @throws InvalidIdempotencyCharset
+             */
+            fn () => $insurance->assert($request)
+        )->not->toThrow(InvalidIdempotencyCharset::class);
+    });
+
+    todo('Idempotency-Key Prefix');
 });
