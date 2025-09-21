@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use Gollumeo\Aegis\Domain\Exceptions\InvalidIdempotencyCharset;
 use Gollumeo\Aegis\Domain\Exceptions\InvalidIdempotencyKeyLength;
 use Gollumeo\Aegis\Domain\Exceptions\MissingIdempotencyHeader;
+use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyCharset;
 use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyHeaders;
 use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyKeyLength;
 use Illuminate\Http\Request;
@@ -112,6 +114,9 @@ describe('Unit: Idempotency Policy', function (): void {
         $request->headers->set($aegisHeaderName, '!!!');
 
         expect(
+            /**
+             * @throws InvalidIdempotencyCharset
+             */
             fn () => $insurance->assert($request)
         )->toThrow(InvalidIdempotencyCharset::class);
     });
