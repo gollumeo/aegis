@@ -13,6 +13,5 @@ return [
         'max' => 120,
         'charset' => 'A-Za-z0-9_-',
         'required_prefix' => null,
-        'required_prefix_value' => 'Idempotency',
     ],
 ];
