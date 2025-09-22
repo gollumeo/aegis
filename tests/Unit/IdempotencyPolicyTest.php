@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 use Gollumeo\Aegis\Domain\Exceptions\InvalidIdempotencyCharset;
 use Gollumeo\Aegis\Domain\Exceptions\InvalidIdempotencyKeyLength;
+use Gollumeo\Aegis\Domain\Exceptions\InvalidIdempotencyKeyPrefix;
 use Gollumeo\Aegis\Domain\Exceptions\MissingIdempotencyHeader;
 use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyCharset;
 use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyHeaders;
 use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyKeyLength;
+use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyKeyPrefix;
 use Illuminate\Http\Request;
 use Random\RandomException;
 
@@ -143,17 +145,52 @@ describe('Unit: Idempotency Policy', function (): void {
     });
 
     it('fails if Idempotency-Key prefix is invalid when it is required', function (): void {
-        // red test
         $insurance = new EnsureIdempotencyKeyPrefix();
 
         $request = Request::create('/payments', 'POST');
         /** @var string $aegisHeaderName */
         $aegisHeaderName = config('aegis.header_name');
 
-        $request->headers->set($aegisHeaderName, '');
+        $request->headers->set($aegisHeaderName, 'Other-abc');
 
         expect(
+            /**
+             * @throws InvalidIdempotencyKeyPrefix
+             */
             fn () => $insurance->assert($request)
         )->toThrow(InvalidIdempotencyKeyPrefix::class);
+    });
+    it('succeeds if Idempotency-Key prefix is valid when it is required', function (): void {
+        $insurance = new EnsureIdempotencyKeyPrefix();
+        $request = Request::create('/payments', 'POST');
+        /** @var string $aegisHeaderName */
+        $aegisHeaderName = config('aegis.header_name');
+
+        // TestCase config sets required_prefix to 'Prefix'
+        $request->headers->set($aegisHeaderName, 'Prefix-abc');
+
+        expect(
+            /**
+             * @throws InvalidIdempotencyKeyPrefix
+             */
+            fn () => $insurance->assert($request)
+        )->not->toThrow(InvalidIdempotencyKeyPrefix::class);
+    });
+
+    it('does nothing when prefix requirement is disabled', function (): void {
+        config(['aegis.key.required_prefix' => null]);
+        $insurance = new EnsureIdempotencyKeyPrefix();
+        $request = Request::create('/payments', 'POST');
+        /** @var string $aegisHeaderName */
+        $aegisHeaderName = config('aegis.header_name');
+        // Using a key not starting with the previous prefix to ensure it would fail if enabled
+        $request->headers->set($aegisHeaderName, 'Other-abc');
+
+        expect(
+            /**
+             * @throws InvalidIdempotencyKeyPrefix
+             */
+            fn () => $insurance->assert($request)
+        )->not->toThrow(InvalidIdempotencyKeyPrefix::class);
     });
 });
