@@ -28,6 +28,7 @@ abstract class TestCase extends Orchestra
         config(['aegis.key.min' => 16]);
         config(['aegis.key.max' => 120]);
         config(['aegis.key.charset' => 'A-Za-z0-9_-']);
+        config(['aegis.key.required_prefix' => 'Prefix']);
     }
 
     protected function defineRoutes(mixed $router): void

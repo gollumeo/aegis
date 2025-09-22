@@ -142,5 +142,18 @@ describe('Unit: Idempotency Policy', function (): void {
         )->not->toThrow(InvalidIdempotencyCharset::class);
     });
 
-    todo('Idempotency-Key Prefix');
+    it('fails if Idempotency-Key prefix is invalid when it is required', function (): void {
+        // red
+        $insurance = new EnsureIdempotencyKeyPrefix();
+
+        $request = Request::create('/payments', 'POST');
+        /** @var string $aegisHeaderName */
+        $aegisHeaderName = config('aegis.header_name');
+
+        $request->headers->set($aegisHeaderName, '');
+
+        expect(
+            fn () => $insurance->assert($request)
+        )->toThrow(InvalidIdempotencyKeyPrefix::class);
+    });
 });
