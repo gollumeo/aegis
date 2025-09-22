@@ -8,7 +8,7 @@
     "ci": [
       "@test",
       "php vendor/bin/pint --parallel",
-      "php vendor/bin/phpstan analyze ."
+      "php vendor/bin/phpstan analyze . --memory-limit=512M"
     ],
     "test": "php vendor/bin/pest --parallel"
   },
