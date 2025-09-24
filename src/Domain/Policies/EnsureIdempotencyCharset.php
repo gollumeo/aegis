@@ -12,9 +12,13 @@ use Illuminate\Http\Request;
 final class EnsureIdempotencyCharset implements Insurance
 {
     /**
-     * {@inheritDoc}
+     * Validates the configured idempotency header value contains only allowed characters.
      *
-     * @throws InvalidIdempotencyCharset
+     * Retrieves the allowed character set and header name from AegisConfig, reads that header
+     * from the given request, and throws InvalidIdempotencyCharset if the value contains any
+     * characters outside the configured charset.
+     *
+     * @throws InvalidIdempotencyCharset If the header value contains disallowed characters.
      */
     public function assert(Request $request): void
     {

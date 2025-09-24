@@ -21,6 +21,17 @@ abstract class TestCase extends Orchestra
         ];
     }
 
+    /**
+     * Configure package-specific environment settings for tests.
+     *
+     * Sets Aegis configuration values (using ConfigKeys enum values) required by tests:
+     * - require header enforcement
+     * - header name
+     * - HTTP methods to protect
+     * - idempotency key length range, charset and prefix
+     *
+     * The configuration is applied to the test application container via the global config helper.
+     */
     protected function defineEnvironment($app): void
     {
         config([ConfigKeys::RequireHeader->value => true]);
@@ -32,6 +43,11 @@ abstract class TestCase extends Orchestra
         config([ConfigKeys::KeyPrefix->value => 'Prefix']);
     }
 
+    /**
+     * Register test routes for the application.
+     *
+     * Defines a POST /payments endpoint handled by DummyController::pay and protected by the 'aegis' middleware.
+     */
     protected function defineRoutes(mixed $router): void
     {
         $router->post('/payments', [DummyController::class, 'pay'])->middleware('aegis');

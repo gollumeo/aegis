@@ -30,6 +30,14 @@ final readonly class AegisConfig
         return $methods;
     }
 
+    /**
+     * Get the configured time-to-live in seconds.
+     *
+     * Reads the value at the configuration key represented by ConfigKeys::TtlSeconds
+     * and returns it cast to an int.
+     *
+     * @return int The TTL in seconds.
+     */
     public static function ttlSeconds(): int
     {
         /** @var int $ttlSeconds */
@@ -39,7 +47,12 @@ final readonly class AegisConfig
     }
 
     /**
-     * @return string[]
+     * Return the replay headers whitelist from configuration.
+     *
+     * Reads the ConfigKeys::ReplayWhitelist configuration value and returns it as
+     * an array of header names (strings) that should be allowed for replay checks.
+     *
+     * @return string[] Array of header names from the `replay_whitelist` config entry.
      */
     public static function replayHeadersWhitelist(): array
     {
@@ -49,6 +62,13 @@ final readonly class AegisConfig
         return $replayWhiteList;
     }
 
+    /**
+     * Get the configured minimum key length.
+     *
+     * Reads the value at ConfigKeys::KeyMin and returns it as an int.
+     *
+     * @return int The minimum allowed key length from configuration.
+     */
     public static function keyMin(): int
     {
         /** @var int $keyMin */
