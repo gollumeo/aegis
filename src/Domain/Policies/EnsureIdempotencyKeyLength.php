@@ -6,29 +6,31 @@ namespace Gollumeo\Aegis\Domain\Policies;
 
 use Gollumeo\Aegis\Application\Contracts\Insurance;
 use Gollumeo\Aegis\Domain\Exceptions\InvalidIdempotencyKeyLength;
+use Gollumeo\Aegis\Support\AegisConfig;
 use Illuminate\Http\Request;
 
 final class EnsureIdempotencyKeyLength implements Insurance
 {
     /**
-     * Validates the idempotency key length in the request headers based on the predefined minimum and maximum charset configurations.
+     * Ensure the request contains an idempotency key whose length falls within configured bounds.
      *
-     * @param  Request  $request  The incoming HTTP request containing the headers to be validated.
+     * Retrieves the header name and allowed minimum/maximum lengths from AegisConfig, reads the
+     * header value (defaults to an empty string if missing), and validates its length using
+     * multibyte-safe string length. If the length is less than the configured minimum or greater
+     * than the configured maximum, an InvalidIdempotencyKeyLength exception is thrown.
      *
-     * @throws InvalidIdempotencyKeyLength If the idempotency key length is outside the allowed range.
+     * @param Request $request The incoming HTTP request to validate.
+     *
+     * @throws InvalidIdempotencyKeyLength When the idempotency key length is outside the allowed range.
      */
     public function assert(Request $request): void
     {
-        /** @var int $minCharset */
-        $minCharset = config('aegis.key.min');
-        /** @var int $maxCharset */
-        $maxCharset = config('aegis.key.max');
-        /** @var string $idempotencyHeaderName */
-        $idempotencyHeaderName = config('aegis.header_name');
-        /** @var string $headers */
-        $headers = $request->headers->get($idempotencyHeaderName);
+        $minKeyLength = AegisConfig::keyMin();
+        $maxKeyLength = AegisConfig::keyMax();
+        $headerName = AegisConfig::headerName();
+        $headers = $request->headers->get($headerName) ?? '';
 
-        if (mb_strlen($headers) < $minCharset || mb_strlen($headers) > $maxCharset) {
+        if (mb_strlen($headers) < $minKeyLength || mb_strlen($headers) > $maxKeyLength) {
             throw new InvalidIdempotencyKeyLength();
         }
     }

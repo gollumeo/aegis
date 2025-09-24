@@ -6,6 +6,7 @@ namespace Gollumeo\Aegis\Domain\Policies;
 
 use Gollumeo\Aegis\Application\Contracts\Insurance;
 use Gollumeo\Aegis\Domain\Exceptions\InvalidIdempotencyKeyPrefix;
+use Gollumeo\Aegis\Support\AegisConfig;
 use Illuminate\Http\Request;
 
 use function mb_strlen;
@@ -13,32 +14,31 @@ use function mb_strlen;
 final class EnsureIdempotencyKeyPrefix implements Insurance
 {
     /**
-     * Ensures that the Idempotency-Key header starts with the configured prefix when required.
-     * Single-key config: aegis.key.required_prefix holds the prefix string. When null or empty, enforcement is disabled.
+     * Ensures the request's Idempotency-Key header starts with the configured prefix when enforcement is enabled.
+     *
+     * If the configured prefix is empty or null, no validation is performed. If the header is missing or does not start
+     * with the required prefix, throws InvalidIdempotencyKeyPrefix.
      *
      * @throws InvalidIdempotencyKeyPrefix
      */
     public function assert(Request $request): void
     {
-        /** @var null|string $requiredPrefix */
-        $requiredPrefix = config('aegis.key.required_prefix');
+        $keyPrefix = AegisConfig::keyPrefix();
 
-        if ($requiredPrefix === null || $requiredPrefix === '') {
+        if (! $keyPrefix) {
             return; // feature disabled
         }
 
-        /** @var string $idempotencyHeaderName */
-        $idempotencyHeaderName = config('aegis.header_name');
-        /** @var string $key */
-        $key = $request->header($idempotencyHeaderName);
+        $headerName = AegisConfig::headerName();
+        $key = $request->header($headerName) ?? '';
 
         if ($key === '') {
-            throw new InvalidIdempotencyKeyPrefix($requiredPrefix);
+            throw new InvalidIdempotencyKeyPrefix($keyPrefix);
         }
 
-        $prefixLength = mb_strlen($requiredPrefix);
-        if (strncmp($key, $requiredPrefix, $prefixLength) !== 0) {
-            throw new InvalidIdempotencyKeyPrefix($requiredPrefix);
+        $prefixLength = mb_strlen($keyPrefix);
+        if (strncmp($key, $keyPrefix, $prefixLength) !== 0) {
+            throw new InvalidIdempotencyKeyPrefix($keyPrefix);
         }
     }
 }

@@ -6,6 +6,7 @@ namespace Gollumeo\Aegis\Domain\Policies;
 
 use Gollumeo\Aegis\Application\Contracts\Insurance;
 use Gollumeo\Aegis\Domain\Exceptions\MissingIdempotencyHeader;
+use Gollumeo\Aegis\Support\AegisConfig;
 use Illuminate\Http\Request;
 
 final class EnsureIdempotencyHeaders implements Insurance
@@ -21,14 +22,12 @@ final class EnsureIdempotencyHeaders implements Insurance
      */
     public function assert(Request $request): void
     {
-        /** @var string $idempotencyHeaderName */
-        $idempotencyHeaderName = config('aegis.header_name');
+        $idempotencyHeaderName = AegisConfig::headerName();
         if (! $request->headers->has($idempotencyHeaderName)) {
             throw new MissingIdempotencyHeader();
         }
 
-        /** @var string $headers */
-        $headers = $request->headers->get($idempotencyHeaderName);
+        $headers = $request->headers->get($idempotencyHeaderName) ?? '';
         if (mb_trim($headers) === '') {
             throw new MissingIdempotencyHeader();
         }
