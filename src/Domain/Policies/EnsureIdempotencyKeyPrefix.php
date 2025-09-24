@@ -14,8 +14,10 @@ use function mb_strlen;
 final class EnsureIdempotencyKeyPrefix implements Insurance
 {
     /**
-     * Ensures that the Idempotency-Key header starts with the configured prefix when required.
-     * Single-key config: aegis.key.required_prefix holds the prefix string. When null or empty, enforcement is disabled.
+     * Ensures the request's Idempotency-Key header starts with the configured prefix when enforcement is enabled.
+     *
+     * If the configured prefix is empty or null, no validation is performed. If the header is missing or does not start
+     * with the required prefix, throws InvalidIdempotencyKeyPrefix.
      *
      * @throws InvalidIdempotencyKeyPrefix
      */
