@@ -6,6 +6,7 @@ namespace Gollumeo\Aegis\Domain\Policies;
 
 use Gollumeo\Aegis\Application\Contracts\Insurance;
 use Gollumeo\Aegis\Domain\Exceptions\InvalidIdempotencyCharset;
+use Gollumeo\Aegis\Support\AegisConfig;
 use Illuminate\Http\Request;
 
 final class EnsureIdempotencyCharset implements Insurance
@@ -17,16 +18,12 @@ final class EnsureIdempotencyCharset implements Insurance
      */
     public function assert(Request $request): void
     {
-        /** @var string $charset */
-        $charset = config('aegis.key.charset');
-        /** @var string $idempotencyHeaderName */
-        $idempotencyHeaderName = config('aegis.header_name');
-        /** @var string $key */
+        $charset = AegisConfig::keyCharset();
+        $idempotencyHeaderName = AegisConfig::headerName();
         $key = $request->header($idempotencyHeaderName);
 
         if (! preg_match('/^['.$charset.']+$/', $key)) {
             throw new InvalidIdempotencyCharset();
         }
-
     }
 }
