@@ -6,6 +6,7 @@ namespace Gollumeo\Aegis\Domain\Policies;
 
 use Gollumeo\Aegis\Application\Contracts\Insurance;
 use Gollumeo\Aegis\Domain\Exceptions\InvalidIdempotencyKeyLength;
+use Gollumeo\Aegis\Support\AegisConfig;
 use Illuminate\Http\Request;
 
 final class EnsureIdempotencyKeyLength implements Insurance
@@ -19,16 +20,12 @@ final class EnsureIdempotencyKeyLength implements Insurance
      */
     public function assert(Request $request): void
     {
-        /** @var int $minCharset */
-        $minCharset = config('aegis.key.min');
-        /** @var int $maxCharset */
-        $maxCharset = config('aegis.key.max');
-        /** @var string $idempotencyHeaderName */
-        $idempotencyHeaderName = config('aegis.header_name');
-        /** @var string $headers */
-        $headers = $request->headers->get($idempotencyHeaderName);
+        $minKeyLength = AegisConfig::keyMin();
+        $maxKeyLength = AegisConfig::keyMax();
+        $headerName = AegisConfig::headerName();
+        $headers = $request->headers->get($headerName) ?? '';
 
-        if (mb_strlen($headers) < $minCharset || mb_strlen($headers) > $maxCharset) {
+        if (mb_strlen($headers) < $minKeyLength || mb_strlen($headers) > $maxKeyLength) {
             throw new InvalidIdempotencyKeyLength();
         }
     }
