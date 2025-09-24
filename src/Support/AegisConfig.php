@@ -38,6 +38,17 @@ final readonly class AegisConfig
         return $ttlSeconds;
     }
 
+    /**
+     * @return string[]
+     */
+    public static function replayHeadersWhitelist(): array
+    {
+        /** @var string[] $replayWhiteList */
+        $replayWhiteList = config(ConfigKeys::ReplayWhitelist->value);
+
+        return $replayWhiteList;
+    }
+
     public static function keyMin(): int
     {
         /** @var int $keyMin */
