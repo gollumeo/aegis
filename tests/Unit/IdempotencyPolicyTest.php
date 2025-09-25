@@ -11,6 +11,7 @@ use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyHeaders;
 use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyKeyLength;
 use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyKeyPrefix;
 use Gollumeo\Aegis\Support\AegisConfig;
+use Gollumeo\Aegis\Support\ConfigKeys;
 use Illuminate\Http\Request;
 
 describe('Unit: Idempotency Policy', function (): void {
@@ -163,7 +164,7 @@ describe('Unit: Idempotency Policy', function (): void {
     });
 
     it('does nothing when prefix requirement is disabled', function (): void {
-        config(['aegis.key.required_prefix' => null]);
+        config([ConfigKeys::KeyPrefix->value => null]);
         $insurance = new EnsureIdempotencyKeyPrefix();
         $request = Request::create('/payments', 'POST');
         $aegisHeaderName = AegisConfig::headerName();
