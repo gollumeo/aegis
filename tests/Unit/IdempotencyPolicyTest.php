@@ -147,6 +147,15 @@ describe('Unit: Idempotency Policy', function (): void {
              */
             fn () => $insurance->assert($request)
         )->toThrow(InvalidIdempotencyKeyPrefix::class);
+
+        $request->headers->set($aegisHeaderName, '');
+
+        expect(
+            /**
+             * @throws InvalidIdempotencyKeyPrefix
+             */
+            fn () => $insurance->assert($request)
+        )->toThrow(InvalidIdempotencyKeyPrefix::class);
     });
     it('succeeds if Idempotency-Key prefix is valid when it is required', function (): void {
         $insurance = new EnsureIdempotencyKeyPrefix();
