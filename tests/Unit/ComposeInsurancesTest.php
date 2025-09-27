@@ -2,26 +2,38 @@
 
 declare(strict_types=1);
 
+use Gollumeo\Aegis\Application\Contracts\Insurance;
+use Gollumeo\Aegis\Domain\Exceptions\InvalidIdempotencyCharset;
+use Gollumeo\Aegis\Domain\Exceptions\InvalidIdempotencyKeyLength;
+use Gollumeo\Aegis\Domain\Exceptions\InvalidIdempotencyKeyPrefix;
 use Gollumeo\Aegis\Domain\Exceptions\MissingIdempotencyHeader;
 use Gollumeo\Aegis\Domain\Policies\Composites\ComposeInsurances;
+use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyCharset;
 use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyHeaders;
+use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyKeyLength;
+use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyKeyPrefix;
 use Gollumeo\Aegis\Support\AegisConfig;
 
 describe('Unit: Compose Insurances', function (): void {
-    it('fails if any policy fails', function (): void {
+    dataset('insurances', [
+        [new EnsureIdempotencyHeaders(), '', MissingIdempotencyHeader::class],
+        [new EnsureIdempotencyKeyLength(), '1234', InvalidIdempotencyKeyLength::class],
+        [new EnsureIdempotencyCharset(), 'foo!bar', InvalidIdempotencyCharset::class],
+        [new EnsureIdempotencyKeyPrefix(), 'Other', InvalidIdempotencyKeyPrefix::class],
+    ]);
+
+    it('fails if any policy fails', function (Insurance $insurance, string $header, string $exception): void {
         $composition = new ComposeInsurances([
-            new EnsureIdempotencyHeaders(),
+            $insurance,
         ]);
 
         $request = Request::create('/payments', 'POST');
+        $request->headers->set(AegisConfig::headerName(), $header);
 
         expect(
-            /**
-             * @throws MissingIdempotencyHeader
-             */
             fn () => $composition->assert($request)
-        )->toThrow(MissingIdempotencyHeader::class);
-    });
+        )->toThrow($exception);
+    })->with('insurances');
 
     it('succeeds if all policies pass', function (): void {
         $composition = new ComposeInsurances([
@@ -34,4 +46,6 @@ describe('Unit: Compose Insurances', function (): void {
             fn () => $composition->assert($request)
         )->not->toThrow(MissingIdempotencyHeader::class);
     });
+
+    todo('Create a valid prefix key for all policies');
 });
