@@ -11,6 +11,8 @@ use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
 {
+    public const string VALID_PREFIX = 'Prefix-test-key-1234';
+
     /**
      * @return class-string[]
      */
