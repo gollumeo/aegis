@@ -13,6 +13,7 @@ use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyHeaders;
 use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyKeyLength;
 use Gollumeo\Aegis\Domain\Policies\EnsureIdempotencyKeyPrefix;
 use Gollumeo\Aegis\Support\AegisConfig;
+use Gollumeo\Aegis\Tests\TestCase;
 
 describe('Unit: Compose Insurances', function (): void {
     dataset('insurances', [
@@ -20,6 +21,13 @@ describe('Unit: Compose Insurances', function (): void {
         [new EnsureIdempotencyKeyLength(), '1234', InvalidIdempotencyKeyLength::class],
         [new EnsureIdempotencyCharset(), 'foo!bar', InvalidIdempotencyCharset::class],
         [new EnsureIdempotencyKeyPrefix(), 'Other', InvalidIdempotencyKeyPrefix::class],
+    ]);
+
+    dataset('invalid-keys', [
+        '',
+        '1234',
+        '123456789!!!!!!!!!!!!!!',
+        'Other-Prefix-Good-Length-Charset',
     ]);
 
     it('fails if any policy fails', function (Insurance $insurance, string $header, string $exception): void {
@@ -40,12 +48,26 @@ describe('Unit: Compose Insurances', function (): void {
             new EnsureIdempotencyHeaders(),
         ]);
         $request = Request::create('/payments', 'POST');
-        $request->headers->set(AegisConfig::headerName(), '45851234567891012');
+        /** @var TestCase $this */
+        $request->headers->set(AegisConfig::headerName(), $this::VALID_PREFIX);
 
         expect(
             fn () => $composition->assert($request)
         )->not->toThrow(MissingIdempotencyHeader::class);
     });
 
-    todo('Create a valid prefix key for all policies');
+    it('fails and stops on first failure', function (string $invalidKey): void {
+        $composition = new ComposeInsurances([
+            new EnsureIdempotencyHeaders(),
+            new EnsureIdempotencyKeyLength(),
+            new EnsureIdempotencyKeyPrefix(),
+            new EnsureIdempotencyCharset(),
+        ]);
+        $request = Request::create('/payments', 'POST');
+        $request->headers->set(AegisConfig::headerName(), $invalidKey);
+
+        expect(
+            fn () => $composition->assert($request)
+        )->toThrow(Exception::class);
+    })->with('invalid-keys');
 });
