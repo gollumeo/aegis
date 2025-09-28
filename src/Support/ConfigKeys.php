@@ -16,4 +16,6 @@ enum ConfigKeys: string
     case KeyMax = 'aegis.key.max';
     case KeyCharset = 'aegis.key.charset';
     case KeyPrefix = 'aegis.key.required_prefix';
+
+    case Policies = 'aegis.policies';
 }
