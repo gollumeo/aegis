@@ -13,7 +13,6 @@ use Throwable;
 
 final readonly class Idempotency
 {
-    // TODO
     public function __construct(
         private Insurance $composedInsurance,
     ) {}
