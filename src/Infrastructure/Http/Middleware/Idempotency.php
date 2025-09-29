@@ -25,7 +25,7 @@ final readonly class Idempotency
         } catch (Throwable $exception) {
             return Response::json([
                 'error' => $exception->getMessage(),
-                'message' => 'This endpoint requires'.AegisConfig::headerName().'.',
+                'message' => 'This endpoint requires '.AegisConfig::headerName().'.',
                 'how_to_fix' => 'Generate a stable key and resend the same request with it.',
             ], 428, [
                 'X-Idempotency-Required' => true,
