@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Gollumeo\Aegis\Support;
 
-use phpDocumentor\Reflection\Types\ClassString;
-
 final readonly class AegisConfig
 {
     public static function requireHeader(): bool
@@ -104,11 +102,11 @@ final readonly class AegisConfig
     }
 
     /**
-     * @return ClassString[]
+     * @return string[]
      */
     public static function policies(): array
     {
-        /** @var ClassString[] $policies */
+        /** @var string[] $policies */
         $policies = config(ConfigKeys::Policies->value);
 
         return $policies;

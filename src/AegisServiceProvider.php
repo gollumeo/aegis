@@ -25,12 +25,8 @@ final class AegisServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(Insurance::class, function (Application $app): Insurance {
-            $policies = [];
-            foreach (AegisConfig::policies() as $class) {
-                /** @var Insurance $policy */
-                $policy = $app->make($class);
-                $policies[] = $policy;
-            }
+            /** @var Insurance[] $policies */
+            $policies = array_map(fn (string $class) => $app->make($class), AegisConfig::policies());
 
             return new ComposeInsurances($policies);
         });
