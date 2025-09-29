@@ -24,6 +24,11 @@ final class AegisServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/aegis.php',
+            'aegis'
+        );
+
         $this->app->bind(Insurance::class, function (Application $app): Insurance {
             /** @var Insurance[] $policies */
             $policies = array_map(fn (string $class) => $app->make($class), AegisConfig::policies());
