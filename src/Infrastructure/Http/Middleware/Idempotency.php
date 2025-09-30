@@ -9,6 +9,7 @@ use Gollumeo\Aegis\Application\Contracts\Insurance;
 use Gollumeo\Aegis\Support\AegisConfig;
 use Illuminate\Http\Request;
 use Response;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Throwable;
 
 final readonly class Idempotency
@@ -26,7 +27,7 @@ final readonly class Idempotency
                 'error' => $exception->getMessage(),
                 'message' => 'This endpoint requires '.AegisConfig::headerName().'.',
                 'how_to_fix' => 'Generate a stable key and resend the same request with it.',
-            ], 428, [
+            ], HttpResponse::HTTP_PRECONDITION_REQUIRED, [
                 'X-Idempotency-Required' => true,
                 'X-Idempotency-Header' => AegisConfig::headerName(),
                 'X-Idempotency-Methods' => implode(', ', AegisConfig::methods()),
