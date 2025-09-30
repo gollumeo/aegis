@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Gollumeo\Aegis\Tests\Fakes\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Response;
 
 final class DummyController
 {
@@ -24,6 +25,6 @@ final class DummyController
     {
         self::$hits++;
 
-        return response()->json(['ok' => true], 201, ['Content-Type' => 'application/json'], JSON_PRETTY_PRINT);
+        return Response::json(['ok' => true], 201, ['Content-Type' => 'application/json'], JSON_PRETTY_PRINT);
     }
 }
