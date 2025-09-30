@@ -49,7 +49,7 @@ describe('Unit: Compose Insurances', function (): void {
         ]);
         $request = Request::create('/payments', 'POST');
         /** @var TestCase $this */
-        $request->headers->set(AegisConfig::headerName(), $this::VALID_PREFIX);
+        $request->headers->set(AegisConfig::headerName(), $this::VALID_KEY);
 
         expect(
             fn () => $composition->assert($request)
