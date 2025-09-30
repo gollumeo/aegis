@@ -10,7 +10,7 @@ describe('Feature: Http Idempotency', function (): void {
     it('musts throw a 428 if header is missing', function (): void {
         /** @var TestCase $this */
         $response = $this->post('/payments');
-        expect($response->status())->toBe(428);
+        expect($response->status())->toBe(Response::HTTP_PRECONDITION_REQUIRED);
     });
 
     it('musts send a 201 if the request passes', function (): void {
