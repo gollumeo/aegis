@@ -15,13 +15,13 @@ use Throwable;
 final readonly class Idempotency
 {
     public function __construct(
-        private Insurance $composedInsurance,
+        private Insurance $composedInsurances,
     ) {}
 
     public function handle(Request $request, Closure $next): mixed
     {
         try {
-            $this->composedInsurance->assert($request);
+            $this->composedInsurances->assert($request);
         } catch (Throwable $exception) {
             return Response::json([
                 'error' => $exception->getMessage(),
